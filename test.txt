@@ -1,0 +1,22 @@
+Frontend
+
+HTML5: For the structural layout of the application.
+CSS3:
+Glassmorphism: Used backdrop-filter and semi-transparent backgrounds for the premium card look.
+Gradients: linear-gradient for the background and buttons.
+Animations: CSS Keyframes for fading and sliding in elements.
+Flexbox: For centering and layout alignment.
+Bootstrap 5: For responsive design, grid system, and utility classes.
+JavaScript (Vanilla):
+Fetch API: To send the file to the backend asynchronously.
+DOM Manipulation: To update the UI dynamically (show hash, alerts).
+Clipboard API: For the "copy hash" feature.
+
+
+Backend
+Node.js: The runtime environment.
+Express.js: The web framework used to set up the server and API routes.
+Multer: Middleware used to handle multipart/form-data for file uploads.
+Crypto (Node.js built-in): Used to generate the SHA-256 hash of the file.
+Streams: Used fs.createReadStream to read the file efficiently in chunks for hashing.
+File System (fs): Used to delete the file after processing to ensure privacy.
