@@ -1,75 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureBox | File Integrity Checker</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+    <title>SecureBox | File Security Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-    <div class="container min-vh-100 d-flex align-items-center justify-content-center">
-        <div class="glass-card p-5 w-100" style="max-width: 700px;">
-            <div class="text-center mb-5">
-                <div class="icon-wrapper mb-3">
-                    <i class="fas fa-shield-alt fa-3x text-white"></i>
-                </div>
-                <h1 class="fw-bold text-white mb-2">SecureBox</h1>
-                <p class="text-white-50">Advanced File Integrity Verification</p>
+<!-- ═══ USER GUIDE MODAL ═══════════════════════════════════════ -->
+<div class="modal-overlay hidden" id="howToModal">
+    <div class="htu-modal">
+        <div class="htu-header">
+            <div class="htu-icon"><i class="fas fa-book-open"></i></div>
+            <div>
+                <h2 class="htu-title">User Guide</h2>
+                <p class="htu-sub">How to use SecureBox — step by step</p>
             </div>
-
-            <div class="upload-section mb-4">
-                <label for="fileInput" class="form-label text-white fw-semibold mb-2">
-                    <i class="fas fa-file-upload me-2"></i>Select File
-                </label>
-                <input class="form-control form-control-lg custom-input" type="file" id="fileInput">
-            </div>
-
-            <button id="uploadBtn" class="btn btn-primary btn-lg w-100 mb-4 custom-btn">
-                <span class="btn-text"><i class="fas fa-fingerprint me-2"></i>Generate Hash</span>
-            </button>
-
-            <div id="resultSection" class="result-box d-none mb-4">
-                <label class="text-white-50 small mb-1">SHA-256 Hash</label>
-                <div class="d-flex align-items-center bg-white bg-opacity-10 rounded p-3">
-                    <code id="hashOutput" class="text-white text-break me-2"></code>
-                    <button class="btn btn-sm btn-link text-white copy-btn" title="Copy to clipboard">
-                        <i class="far fa-copy"></i>
-                    </button>
+            <button class="htu-close" id="htuClose"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="htu-steps">
+            <div class="htu-step">
+                <div class="step-num">01</div>
+                <div class="step-body">
+                    <h4 class="step-title">Go to "File Analyzer"</h4>
+                    <p class="step-desc">Click "File Analyzer" in the left menu. Drag your file into the upload area, or click "Browse Files" to pick one from your computer. Any file type is accepted (max 500 MB).</p>
                 </div>
             </div>
-
-            <div class="separator mb-4 position-relative text-center">
-                <span class="text-white-50 bg-transparent px-2">VERIFY INTEGRITY</span>
+            <div class="htu-step">
+                <div class="step-num">02</div>
+                <div class="step-body">
+                    <h4 class="step-title">Click "Scan File"</h4>
+                    <p class="step-desc">Press the blue "Scan File" button. SecureBox will calculate the file's unique fingerprint (hash), check it against known threat signatures, and give it a Safety Score from 0–100.</p>
+                </div>
             </div>
-
-            <div class="compare-section mb-3">
-                <label for="originalHash" class="form-label text-white fw-semibold mb-2">
-                    <i class="fas fa-key me-2"></i>Original Hash
-                </label>
-                <input type="text" class="form-control form-control-lg custom-input" id="originalHash"
-                    placeholder="Paste the original hash here...">
+            <div class="htu-step">
+                <div class="step-num">03</div>
+                <div class="step-body">
+                    <h4 class="step-title">Read the Safety Score</h4>
+                    <p class="step-desc"><b>Green (0–29):</b> File looks safe. <b>Yellow (30–59):</b> Some suspicious patterns found, proceed with caution. <b>Red (60–100):</b> High risk — do not open this file.</p>
+                </div>
             </div>
-
-            <button id="compareBtn" class="btn btn-success btn-lg w-100 custom-btn">
-                <span class="btn-text"><i class="fas fa-check-double me-2"></i>Verify Match</span>
-            </button>
-
-            <div id="compareResult" class="mt-4 text-center"></div>
+            <div class="htu-step">
+                <div class="step-num">04</div>
+                <div class="step-body">
+                    <h4 class="step-title">Verify a Download (Optional)</h4>
+                    <p class="step-desc">After scanning, go to "Verify Integrity". Paste the official hash from the software developer's website and click "Verify Now" to confirm the download was not tampered with.</p>
+                </div>
+            </div>
+            <div class="htu-step last">
+                <div class="step-num">05</div>
+                <div class="step-body">
+                    <h4 class="step-title">Run Forensics Lab (Advanced)</h4>
+                    <p class="step-desc">Go to "Forensics Lab" and click "Launch Forensic Scan". This extracts hidden metadata (GPS, camera model in images), hidden text strings, and shows the raw binary data of the file.</p>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/main.js"></script>
+<!-- ═══ LOADING OVERLAY ══════════════════════════════════════ -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+    <div class="loading-card">
+        <div class="spinner"></div>
+        <h4 id="loadingTitle" style="margin-bottom:1rem;">Processing</h4>
+        <div id="ls1" class="ls"><i class="fas fa-circle-notch fa-spin"></i> Computing hashes</div>
+        <div id="ls2" class="ls" style="color:#94a3b8"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Scanning threats</div>
+        <div id="ls3" class="ls" style="color:#94a3b8"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Checking hidden content</div>
+        <div id="ls4" class="ls" style="color:#94a3b8"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Generating report</div>
+        <div class="progress-bar-track mt-3">
+            <div class="progress-bar" id="loadingBar" style="width:0%"></div>
+        </div>
+        <p style="font-size:0.8rem;text-align:center;margin-top:0.5rem;color:var(--primary);font-weight:600;" id="loadingPct">0%</p>
+    </div>
+</div>
+
+<!-- ═══ APP SHELL ════════════════════════════════════════════ -->
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-shield-halved"></i> SecureBox
+        </div>
+        <nav class="sidebar-nav">
+            <p class="nav-section">NAVIGATION</p>
+            <button class="nav-link active" data-page="dashboard">
+                <i class="fas fa-house"></i> Dashboard
+            </button>
+            <button class="nav-link" data-page="analyzer">
+                <i class="fas fa-magnifying-glass"></i> File Analyzer
+            </button>
+            <button class="nav-link" data-page="verifier">
+                <i class="fas fa-shield-check"></i> Verify Integrity
+            </button>
+            <button class="nav-link" data-page="forensics">
+                <i class="fas fa-microscope"></i> Forensics Lab
+            </button>
+            <p class="nav-section" style="margin-top:2rem;">HELP</p>
+            <button class="nav-link" id="openHtu">
+                <i class="fas fa-book"></i> User Guide
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <i class="fas fa-lock"></i>
+            All files are processed securely in memory. Nothing is stored on the server.
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <span class="page-title" id="pageTitle">Dashboard</span>
+            <div class="topbar-right">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    System Online
+                </div>
+                <div class="header-clock" id="liveClock">00:00:00</div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="content-area">
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: DASHBOARD
+            ══════════════════════════════════════════════ -->
+            <section id="page-dashboard" class="view-section active">
+
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="welcome-text">
+                        <h2>Welcome to SecureBox 🔒</h2>
+                        <p>A professional file security toolkit. Scan any file for threats, verify downloads are authentic, and perform deep forensics — all without uploading anything to the cloud.</p>
+                        <button class="btn btn-primary mt-3" onclick="goTo('analyzer')" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);">
+                            <i class="fas fa-upload"></i> Scan Your First File
+                        </button>
+                    </div>
+                    <div class="welcome-image"><i class="fas fa-shield-halved"></i></div>
+                </div>
+
+                <!-- Stats -->
+                <p class="section-heading">Session Statistics</p>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-blue"><i class="fas fa-file-alt"></i></div>
+                        <div>
+                            <div class="stat-value" id="statScanned">0</div>
+                            <div class="stat-label">Files Scanned</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-red"><i class="fas fa-bug"></i></div>
+                        <div>
+                            <div class="stat-value" id="statThreats">0</div>
+                            <div class="stat-label">Threats Detected</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon bg-green"><i class="fas fa-circle-check"></i></div>
+                        <div>
+                            <div class="stat-value" id="statClean">0</div>
+                            <div class="stat-label">Clean Files</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Cards -->
+                <p class="section-heading">What would you like to do?</p>
+                <div class="features-grid">
+                    <div class="feature-card" onclick="goTo('analyzer')">
+                        <i class="fas fa-search-dollar text-primary"></i>
+                        <h5>Scan a File for Threats</h5>
+                        <p>Upload any file to check for hidden malware, suspicious scripts, dangerous extensions, and get a 0–100 safety score.</p>
+                    </div>
+                    <div class="feature-card" onclick="goTo('verifier')">
+                        <i class="fas fa-fingerprint text-success"></i>
+                        <h5>Verify a Download</h5>
+                        <p>Paste the official hash (fingerprint) from a software vendor to confirm your download is 100% authentic and untampered.</p>
+                    </div>
+                    <div class="feature-card" onclick="goTo('forensics')">
+                        <i class="fas fa-microscope text-purple"></i>
+                        <h5>Run Forensics Lab</h5>
+                        <p>Extract hidden camera/GPS metadata from images, find embedded text strings, and inspect the raw binary code of any file.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: FILE ANALYZER
+            ══════════════════════════════════════════════ -->
+            <section id="page-analyzer" class="view-section hidden">
+
+                <!-- Upload Card -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <div class="card-icon"><i class="fas fa-upload"></i></div>
+                            <div>
+                                <div class="card-title">Upload File for Scanning</div>
+                                <div class="card-sub">We scan for threats, generate fingerprints &amp; calculate a risk score.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drop Zone -->
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                        <p class="drop-title">Drag &amp; drop your file here</p>
+                        <p class="drop-sub">or click anywhere in this box to browse (Max 500 MB)</p>
+                        <input type="file" id="fileInput" hidden>
+                    </div>
+
+                    <!-- File Preview -->
+                    <div id="filePreview" class="file-preview hidden">
+                        <div class="file-icon-wrap"><i id="fileIcon" class="fas fa-file-alt"></i></div>
+                        <div class="file-meta">
+                            <div class="file-name" id="previewName">—</div>
+                            <div class="file-size-type"><span id="previewSize">—</span> &bull; <span id="previewType">—</span></div>
+                        </div>
+                        <span class="badge badge-success" style="flex-shrink:0">Ready</span>
+                    </div>
+
+                    <!-- Algorithm selector -->
+                    <div class="algo-selector hidden" id="algoSelectorGroup">
+                        <div class="algo-label">Select fingerprint types to generate:</div>
+                        <div class="algo-chips">
+                            <label class="algo-chip active"><input type="checkbox" value="md5" checked> MD5</label>
+                            <label class="algo-chip active"><input type="checkbox" value="sha1" checked> SHA-1</label>
+                            <label class="algo-chip active"><input type="checkbox" value="sha256" checked> SHA-256</label>
+                            <label class="algo-chip"><input type="checkbox" value="sha384"> SHA-384</label>
+                            <label class="algo-chip"><input type="checkbox" value="sha512"> SHA-512</label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-100 mt-3" id="analyzeBtn">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <span id="analyzeBtnText">Scan File</span>
+                    </button>
+                </div>
+
+                <!-- Results Grid -->
+                <div id="resultsSection" class="results-grid hidden">
+
+                    <!-- Safety Score -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <div class="card-icon"><i class="fas fa-shield-virus"></i></div>
+                                <div>
+                                    <div class="card-title">Safety Score</div>
+                                    <div class="card-sub">Is this file dangerous?</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-success" id="riskBadge">SAFE</span>
+                        </div>
+                        <div class="risk-content">
+                            <div class="risk-meter">
+                                <svg viewBox="0 0 200 120" class="risk-svg">
+                                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round"/>
+                                    <path id="riskArcFill" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#10b981" stroke-width="14" stroke-linecap="round"
+                                          stroke-dasharray="251" stroke-dashoffset="251" style="transition:stroke-dashoffset 1.5s ease, stroke 0.5s"/>
+                                    <text x="100" y="92" text-anchor="middle" class="risk-score-text" id="riskScoreText">0</text>
+                                    <text x="100" y="110" text-anchor="middle" class="risk-label-text">RISK SCORE /100</text>
+                                </svg>
+                            </div>
+                            <div class="threat-list" id="threatList">
+                                <div class="no-threats"><i class="fas fa-clock"></i> Awaiting scan…</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fingerprints -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <div class="card-icon"><i class="fas fa-hashtag"></i></div>
+                                <div>
+                                    <div class="card-title">File Fingerprints (Hashes)</div>
+                                    <div class="card-sub">Unique mathematical ID for this file</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="hashResults" class="hash-results">
+                            <div style="color:var(--text-muted);font-size:0.82rem;">Hashes will appear after scanning.</div>
+                        </div>
+                    </div>
+
+                    <!-- Entropy -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <div class="card-icon"><i class="fas fa-wave-square"></i></div>
+                                <div>
+                                    <div class="card-title">Hidden Content Detector</div>
+                                    <div class="card-sub">High randomness = possible encryption or hidden code</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entropy-header">
+                            <span class="entropy-val" id="entropyValue">—</span>
+                            <span class="entropy-unit">bits/byte</span>
+                        </div>
+                        <div class="progress-bar-track">
+                            <div class="progress-bar" id="entropyBar" style="width:0%"></div>
+                        </div>
+                        <p class="entropy-desc" id="entropyDesc">Awaiting scan…</p>
+                    </div>
+
+                    <!-- File Info -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <div class="card-icon"><i class="fas fa-circle-info"></i></div>
+                                <div>
+                                    <div class="card-title">File Information</div>
+                                    <div class="card-sub">Basic file attributes</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="metaGrid" class="meta-grid">
+                            <div style="color:var(--text-muted);font-size:0.82rem;grid-column:span 2;">Metadata will appear after scanning.</div>
+                        </div>
+                    </div>
+
+                    <!-- Go to forensics prompt -->
+                    <div class="card col-span-2" style="text-align:center;background:#f8fafc;">
+                        <i class="fas fa-microscope text-purple" style="font-size:1.8rem;margin-bottom:0.6rem;"></i>
+                        <h4 style="margin-bottom:0.4rem;">Want to go deeper?</h4>
+                        <p class="text-muted text-sm mb-3">The Forensics Lab extracts hidden image metadata, finds text strings, and shows raw binary data.</p>
+                        <button class="btn btn-outline" onclick="goTo('forensics')">
+                            <i class="fas fa-microscope"></i> Open Forensics Lab
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: VERIFY INTEGRITY
+            ══════════════════════════════════════════════ -->
+            <section id="page-verifier" class="view-section hidden">
+                <div class="card" style="max-width:740px;margin:0 auto;">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <div class="card-icon"><i class="fas fa-shield-check"></i></div>
+                            <div>
+                                <div class="card-title">Verify File Authenticity</div>
+                                <div class="card-sub">Confirm a downloaded file hasn't been altered by hackers</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
+                        <b style="color:var(--text-main);">📋 How to use:</b> First, go to <b>File Analyzer</b> and scan the file you downloaded. Then, find the official hash (fingerprint) on the software vendor's website (usually next to the download link). Paste it below and click Verify.
+                    </div>
+
+                    <div class="input-row">
+                        <select class="form-select" id="verifyAlgo">
+                            <option value="md5">MD5</option>
+                            <option value="sha1">SHA-1</option>
+                            <option value="sha256" selected>SHA-256</option>
+                            <option value="sha384">SHA-384</option>
+                            <option value="sha512">SHA-512</option>
+                        </select>
+                        <input type="text" class="form-input" id="originalHash" placeholder="Paste official hash (fingerprint) from vendor's website…" style="font-family:var(--font-mono);font-size:0.8rem;">
+                    </div>
+                    <button class="btn btn-primary w-100" id="verifyBtn">
+                        <i class="fas fa-shield-check"></i> Verify Now
+                    </button>
+                    <div id="verifyResult" class="verify-result hidden"></div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════
+                 PAGE: FORENSICS LAB
+            ══════════════════════════════════════════════ -->
+            <section id="page-forensics" class="view-section hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <div class="card-icon icon-purple"><i class="fas fa-microscope"></i></div>
+                            <div>
+                                <div class="card-title">Digital Forensics Lab</div>
+                                <div class="card-sub">Deep binary inspection, hidden metadata extraction, and string analysis</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-purple">ADVANCED</span>
+                    </div>
+
+                    <!-- Locked -->
+                    <div id="forensicsLocked" class="forensics-locked">
+                        <div class="locked-icon-large"><i class="fas fa-lock"></i></div>
+                        <h4 style="margin-bottom:0.5rem;">Select a File First</h4>
+                        <p class="text-muted text-sm mb-3">Go to <b>File Analyzer</b>, upload a file, then come back here to run the forensic scan.</p>
+                        <button class="btn btn-primary" id="forensicsBtn" disabled>
+                            <i class="fas fa-microscope"></i>
+                            <span id="forensicsBtnText">No file selected</span>
+                        </button>
+                        <button class="btn btn-outline mt-3" onclick="goTo('analyzer')">
+                            <i class="fas fa-arrow-left"></i> Go to File Analyzer
+                        </button>
+                    </div>
+
+                    <!-- Results -->
+                    <div id="forensicsResults" class="hidden">
+
+                        <!-- Run scan button at top -->
+                        <div style="margin-bottom:1.5rem;">
+                            <button class="btn btn-primary" id="forensicsRunBtn" disabled>
+                                <i class="fas fa-play"></i>
+                                <span id="forensicsRunBtnText">No file selected</span>
+                            </button>
+                        </div>
+
+                        <!-- Top Row: File Type + Byte Categories -->
+                        <div class="forensics-grid">
+                            <div class="forensics-box">
+                                <h5><i class="fas fa-fingerprint text-purple"></i> True File Type</h5>
+                                <p class="text-xs text-muted mb-2">Detected from the file's raw magic bytes — ignores the file extension.</p>
+                                <div class="ft-card" id="filetypeCard">
+                                    <div class="ft-icon" id="ftIconWrap"><i class="fas fa-file" id="ftIcon"></i></div>
+                                    <div class="ft-details">
+                                        <h6 id="ftLabel">—</h6>
+                                        <div class="magic-bytes-row" id="magicBytesRow"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="forensics-box">
+                                <h5><i class="fas fa-chart-pie text-purple"></i> Data Composition</h5>
+                                <p class="text-xs text-muted mb-2">What percentage of the file is readable text vs raw binary code.</p>
+                                <div class="byte-cat-grid" id="byteCatGrid"></div>
+                            </div>
+                        </div>
+
+                        <!-- EXIF / Hidden Metadata (image only) -->
+                        <div class="forensics-box mt-4 hidden" id="exifSection">
+                            <h5><i class="fas fa-camera text-purple"></i> Hidden Metadata &amp; EXIF Data</h5>
+                            <p class="text-xs text-muted mb-2">Tags embedded inside the image file — may include GPS location, camera model, software, and timestamps.</p>
+                            <div class="exif-grid" id="exifGrid"></div>
+                        </div>
+
+                        <!-- Byte Frequency Chart -->
+                        <div class="forensics-box mt-4">
+                            <h5><i class="fas fa-chart-bar text-purple"></i> Byte Frequency Pattern</h5>
+                            <p class="text-xs text-muted mb-2">Shows how often every possible byte (0x00–0xFF) appears. Encrypted or packed files have very uniform charts.</p>
+                            <div class="byte-freq-chart" id="byteFreqChart"></div>
+                            <div class="top-bytes-table" id="topBytesTable"></div>
+                        </div>
+
+                        <!-- Extracted Strings -->
+                        <div class="forensics-box mt-4">
+                            <div class="d-flex justify-between align-items-center mb-2">
+                                <h5 style="margin-bottom:0;"><i class="fas fa-font text-purple"></i> Extracted Text &amp; Strings</h5>
+                                <span class="text-xs text-muted" id="stringsCount">0 found</span>
+                            </div>
+                            <p class="text-xs text-muted mb-2">Readable text pulled from the raw binary — may contain hidden URLs, IP addresses, or commands.</p>
+                            <input type="text" class="form-input mb-2" id="stringsSearch" placeholder="Search strings (URLs, IPs, commands…)" style="font-size:0.82rem;">
+                            <div class="strings-container" id="stringsContainer"></div>
+                        </div>
+
+                        <!-- Professional Hex Dump -->
+                        <div class="forensics-box mt-4">
+                            <div class="d-flex justify-between align-items-center mb-2">
+                                <h5 style="margin-bottom:0;"><i class="fas fa-terminal text-purple"></i> Raw Hex Dump (First 512 Bytes)</h5>
+                                <button class="btn btn-outline btn-sm" id="copyFullHexBtn"><i class="fas fa-copy"></i> Copy</button>
+                            </div>
+                            <p class="text-xs text-muted mb-2">The raw machine-level code of the file displayed in hexadecimal. Blue = printable characters, grey = null bytes.</p>
+                            <div class="pro-hex-viewer" id="proHexViewer"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /content-area -->
+    </div><!-- /main-wrapper -->
+</div><!-- /app-layout -->
+
+<script src="js/main.js"></script>
 </body>
-
 </html>

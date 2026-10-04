@@ -1,0 +1,17 @@
+# Dependency Lock File
+node_modules/
+
+# Uploaded files (none expected – app uses in-memory storage)
+uploads/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE folders
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
